@@ -32,27 +32,16 @@ ISR (USART_RXC_vect)
 	
 	if(rxindex>=3)
 	{
-		if((RXBuf[0]&0b11110000) == 0b10000000)	//jeśli WŁĄCZ_NUTĘ
-		{
-			nuty|=(1<<(RXBuf[1]&MASK_7BIT));
-		}
-		if((RXBuf[0]&0b11110000) == 0b10010000)	//jeśli WYŁĄCZ_NUTĘ
+		if((RXBuf[0]&0b11110000) == 0b10000000)	//jeśli WYŁĄCZ_NUTĘ
 		{
 			nuty&=~(1<<(RXBuf[1]&MASK_7BIT));
 		}
+		if((RXBuf[0]&0b11110000) == 0b10010000)	//jeśli WŁĄCZ_NUTĘ
+		{
+			nuty|=(1<<(RXBuf[1]&MASK_7BIT));
+		}
 		rxindex=0;
 	}	
-	
-	/*uint8_t buffer=UDR;	//kopia bufora
-	
-	if(buffer&0b11110000 == 0b10000000)	//jeśli WŁĄCZ_NUTĘ
-	{
-		nuty|=(1<<buffer&0b00001111);	//ustaw bit nuty na 1
-	}
-	if(buffer&0b11110000 == 0b10010000)	//jeśli WYŁĄCZ_NUTĘ
-	{
-		nuty&=~(1<<buffer&0b00001111);	//ustaw bit nuty na 0
-	}*/
 }
 
 int main(void)
@@ -81,6 +70,9 @@ void init()
 	
 	DDRA=0xFF;
 	DDRB=0xFF;
+	
+	PORTA=0x00;
+	PORTB=0x00;
 	
 	UBRRH=(baud>>8);												//ustaw starszy bajt
 	UBRRL=baud;														//ustaw młodszy bajt
